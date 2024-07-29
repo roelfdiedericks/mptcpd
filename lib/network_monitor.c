@@ -935,6 +935,11 @@ static void handle_rtm_getroute(int error,
                 goto again;
         }
 
+		l_debug("handle_rtm_getroute: from %s ifindex:%d",
+				mptcpd_addr_to_string(ai, str, INET6_ADDRSTRLEN)
+				ai->index
+			   );
+
         (void) type;
         assert(type == RTM_NEWROUTE);
 
@@ -1018,6 +1023,8 @@ static void check_default_route(struct nm_addr_info *ai)
                 addr = &test_net_v4;
 
         buf += add_attr_address(buf, RTA_DST, is_ipv4, addr);
+
+		l_debug("check_default_route");
 
         /*
           An address delete event can attempt to free this addr info
@@ -1388,7 +1395,7 @@ static void handle_route(uint16_t type,
                              mptcpd_interface_match,
                              &ifindex);
 		if (!i) {
-			l_error("couldn't extract an nm->interface dst:%s ifindex:%d ", dst,ifindex);
+			l_info("no nm->iface: extracted dest:%s via %s src:%s ifindex:%d ",dst,gateway,src,ifindex);
 		} else {
 			l_info("extracted dest:%s via %s src:%s ifindex:%d ifname:%s",dst,gateway,src,ifindex,i->name);
 		}
