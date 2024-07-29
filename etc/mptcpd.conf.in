@@ -14,7 +14,7 @@
 #   syslog  - POSIX based system logger
 #   journal - systemd Journal
 #   null    - disable logging
-log=@mptcpd_logger@
+log=syslog
 
 # ----------------
 # Plugin directory
@@ -26,7 +26,7 @@ plugin-dir=@pkglibdir@
 # ---------------------
 # The plugin found with the most favorable (lowest) priority will be
 # used if one is not specified.
-path-manager=@mptcpd_default_pm@
+path-manager=addr_adv
 
 # --------------------------
 # Address announcement flags
@@ -43,7 +43,7 @@ path-manager=@mptcpd_default_pm@
 #
 # See the ip-mptcp(8) man page for details.
 #
-# addr-flags=subflow
+addr-flags=subflow
 
 # --------------------------
 # Address notification flags
@@ -62,11 +62,11 @@ path-manager=@mptcpd_default_pm@
 # These flags determine whether mptpcd plugins will be notified when
 # related addresses are updated.
 #
-# notify-flags=existing,skip_link_local,skip_loopback
+notify-flags=existing,skip_link_local,skip_loopback,check_route
 
 # --------------------------
 # Plugins to load
 # --------------------------
 # A comma separated list containing one or more plugins to load.
 #
-# load-plugins=addr_adv,sspi
+load-plugins=addr_adv
