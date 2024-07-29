@@ -1355,9 +1355,6 @@ static void handle_route(uint16_t type,
 
 		//char str[INET6_ADDRSTRLEN];
         uint32_t ifindex = 0;
-        uint32_t table = 0;
-        uint32_t priority = 0;
-        uint8_t  pref = 0;
         char *dst = NULL;
         char *gateway = NULL;
         char *src = NULL;
@@ -1375,24 +1372,18 @@ static void handle_route(uint16_t type,
 
 
 		if (rtm->rtm_family == AF_INET) {
-			l_rtnl_route_extract(data,
+			l_rtnl_route4_extract(data,
 					len,
-					AF_INET
-					&table,
+					NULL,
 					&ifindex,
-					&priority,
-					&pref,
 					&dst,
 					&gateway,
 					&src);
 		} else {
-			l_rtnl_route_extract(data,
+			l_rtnl_route6_extract(data,
 					len,
-					AF_INET6
-					&table,
+					NULL,
 					&ifindex,
-					&priority,
-					&pref,
 					&dst,
 					&gateway,
 					&src);
@@ -1404,9 +1395,9 @@ static void handle_route(uint16_t type,
                              mptcpd_interface_match,
                              &ifindex);
 		if (!i) {
-			l_info("extracted dest:%s via %s src:%s ifindex:%d ifname:(unknown) prio:%d, pref:%d",dst,gateway,src,ifindex,priority,pref);
+			l_info("no nm->iface: extracted dest:%s via %s src:%s ifindex:%d ",dst,gateway,src,ifindex);
 		} else {
-			l_info("extracted dest:%s via %s src:%s ifindex:%d ifname:%s prio:%d, pref:%d",dst,gateway,src,ifindex,i->name,priority,pref);
+			l_info("extracted dest:%s via %s src:%s ifindex:%d ifname:%s",dst,gateway,src,ifindex,i->name);
 		}
 
 
