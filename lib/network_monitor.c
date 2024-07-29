@@ -1359,10 +1359,25 @@ static void handle_route(uint16_t type,
         char *gateway = NULL;
         char *src = NULL;
 
+		char *msgtype="UNKNOWN";
+		char *msg_RTM_NEWROUTE="RTM_NEWROUTE";
+		char *msg_RTM_DELROUTE="RTM_DELROUTE";
+		char *msg_RTM_GETROUTE="RTM_GETROUTE";
+
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface_from_route(rtm, nm);
 
-		l_info("received a netlink ROUTE: family:(%s) message:%d rtm_type:%d, len:%d, nmiface:%p",
+		if (type==RTM_NEWROUTE) 
+			msgtype=*msg_RTM_NEWROUTE;
+		if (type==RTM_DELROUTE) 
+			msgtype=*msg_RTM_DELROUTE;
+		if (type==RTM_GETROUTE) 
+			msgtype=*msg_RTM_GETROUTE;
+
+
+
+		l_info("handle_route:%s: family:(%s) message:%d rtm_type:%d, len:%d, nmiface:%p",
+				msgtype,
 				rtm->rtm_family == AF_INET ? "AF_INET" : "AF_INET6",
 				type,
 				rtm->rtm_type,
