@@ -1349,7 +1349,7 @@ static void handle_route(uint16_t type,
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface_from_route(rtm, nm);
 
-		l_info("received a netlink ROUTE message:%d rtm_type:%d, len:%d",type,rtm->rtm_type,len);
+		l_info("received a netlink ROUTE message:%d rtm_type:%d, len:%d, interface:%p",type,rtm->rtm_type,len,interface);
 
         /*
           Verify that the address belongs to a network interface being
