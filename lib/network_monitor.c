@@ -695,12 +695,12 @@ static void remove_link(struct ifinfomsg const *ifi,
                                   mptcpd_interface_match,
                                   &ifi->ifi_index);
 
-		l_debug("Network interface %d went down. ",
+		l_info("Network interface %d went down. ",
 				ifi->ifi_index);
 
 
         if (interface == NULL) {
-                l_debug("Network interface %d not monitored. "
+                l_info("Network interface %d not monitored. "
                         "Ignoring monitoring removal failure.",
                         ifi->ifi_index);
 
@@ -710,7 +710,7 @@ static void remove_link(struct ifinfomsg const *ifi,
         // Notify removed network interface event observers.
         l_queue_foreach(nm->ops, notify_delete_interface, interface);
 
-        mptcpd_interface_destroy(interface);
+        //mptcpd_interface_destroy(interface);
 }
 
 /**
@@ -1628,7 +1628,7 @@ struct mptcpd_nm *mptcpd_nm_create(uint32_t flags)
 
         // Listen for route changes.
         nm->route_id = l_netlink_register(nm->rtnl,
-                                         RTNLGRP_IPV4_ROUTE,
+                                         RTNLGRP_IPV4_ROUTE | RTNLGRP_IPV6_ROUTE,
                                          handle_route,
                                          nm,    // user_data
                                          NULL); // destroy
