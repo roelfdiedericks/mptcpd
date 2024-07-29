@@ -1395,7 +1395,7 @@ static void handle_route(uint16_t type,
                              mptcpd_interface_match,
                              &ifindex);
 		if (!i) {
-			l_info("no nm->iface: extracted dest:%s via %s src:%s ifindex:%d ",dst,gateway,src,ifindex);
+			l_info("extracted dest:%s via %s src:%s ifindex:%d ifname:unknown",dst,gateway,src,ifindex);
 		} else {
 			l_info("extracted dest:%s via %s src:%s ifindex:%d ifname:%s",dst,gateway,src,ifindex,i->name);
 		}
