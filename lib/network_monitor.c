@@ -82,6 +82,10 @@ struct mptcpd_nm
         /// IPv6 rtnetlink multicast notification IDs.
         unsigned int ipv6_id;
 
+        /// rtnetlink route notification IDs.
+        unsigned int route_id;
+
+
         /// List of @c mptcpd_interface objects.
         struct l_queue *interfaces;
 
@@ -654,6 +658,9 @@ static void update_link(struct ifinfomsg const *ifi,
                 l_queue_find(nm->interfaces,
                              mptcpd_interface_match,
                              &ifi->ifi_index);
+		l_debug("Network interface %d went updated/up. ",
+				ifi->ifi_index);
+
 
         if (i == NULL) {
                 i = insert_link(ifi, len, nm);
@@ -687,6 +694,10 @@ static void remove_link(struct ifinfomsg const *ifi,
                 l_queue_remove_if(nm->interfaces,
                                   mptcpd_interface_match,
                                   &ifi->ifi_index);
+
+		l_debug("Network interface %d went down. ",
+				ifi->ifi_index);
+
 
         if (interface == NULL) {
                 l_debug("Network interface %d not monitored. "
@@ -1160,6 +1171,55 @@ static struct mptcpd_interface *get_mptcpd_interface(
 }
 
 /**
+ * @brief Get @c mptcpd_interface instance for a rtmsg (route) netlink message
+ *
+ * Get @c mptcpd_interface instance that matches the interface/link
+ * index, i.e. @a ifa->ifa_index.
+ *
+ * @param[in] ifa Network address-specific information retrieved
+ *                from @c RTM_NEWADDR or @c RTM_DELADDR messages.
+ * @param[in] nm  Pointer to the @c mptcpd_nm object that contains the
+ *                list (queue) of @c mptcpd_interface objects.
+ */
+static struct mptcpd_interface *get_mptcpd_interface_from_route(
+        struct ifaddrmsg const * ifa,
+        struct mptcpd_nm *       nm)
+{
+        /* See rtnetlink(7) man page for struct ifaddrmsg details. */
+
+        /**
+         * @todo The below debug log message assumes that only
+         *       AF_INET and AF_INET6 families are supported by
+         *       RTM_GETADDR.  While that is true at the moment, it
+         *       may change in the future.
+         */
+        l_debug("\n"
+                "ifa_family:    %s\n"
+                "ifa_prefixlen: %u\n"
+                "ifa_flags:     0x%02x\n"
+                "ifa_scope:     %u\n"
+                "ifa_index:     %d",
+                ifa->ifa_family == AF_INET ? "AF_INET" : "AF_INET6",
+                ifa->ifa_prefixlen,
+                ifa->ifa_flags,
+                ifa->ifa_scope,
+                ifa->ifa_index);
+
+        struct mptcpd_interface *const interface =
+                l_queue_find(nm->interfaces,
+                             mptcpd_interface_match,
+                             &ifa->ifa_index);
+
+        if (interface == NULL)
+                l_debug("Ignoring address for unmonitored "
+                        "network interface (%d).",
+                        ifa->ifa_index);
+
+        return interface;
+}
+
+
+/**
  * @brief Network address handler function signature.
  */
 typedef
@@ -1257,6 +1317,61 @@ static void handle_ifaddr(uint16_t type,
 
         foreach_ifaddr(ifa, len, nm, interface, handler);
 }
+
+/**
+ * @brief Handle changes to routes.
+ *
+ * This is the @c RTNLGRP_IPV4_ROUTE and @c RTNLGRP_IPV6_ROUTE
+ * message handler.
+ *
+ * @param[in] type      Netlink message content type (unused).
+ * @param[in] data      Pointer to rtnetlink @c rtmsg object
+ *                      corresponding to a route entry.
+ * @param[in] len       Length of the Netlink message.
+ * @param[in] user_data Pointer to the @c mptcpd_nm object that
+ *                      contains the list (queue) to which network
+ *                      interface information will be inserted.
+ */
+static void handle_route(uint16_t type,
+                          void const *data,
+                          uint32_t len,
+                          void *user_data)
+{
+        struct rtmsg const *const rtm = data;
+        struct mptcpd_nm *const       nm  = user_data;
+
+        //struct mptcpd_interface *const interface =
+        //        get_mptcpd_interface(ifa, nm);
+
+		l_info("received a netlink ROUTE message:%d rtm_type:%d",type,rtm->rtm_type);
+
+        /*
+          Verify that the address belongs to a network interface being
+          monitored.
+         */
+		/*
+        if (interface == NULL)
+                return;
+
+        handle_ifaddr_func_t handler = NULL;
+
+        switch (type) {
+        case RTM_NEWADDR:
+                handler = update_addr;
+                break;
+        case RTM_DELADDR:
+                handler = remove_addr;
+                break;
+        default:
+                l_error("Unexpected message in RTNLGRP_IPV4/V6_IFADDR "
+                        "handler");
+                return;
+        }
+
+        foreach_ifaddr(ifa, len, nm, interface, handler);
+		*/
+}
+
 
 // -------------------------------------------------------------------
 //                  rtnetlink Command Handling
@@ -1448,6 +1563,20 @@ struct mptcpd_nm *mptcpd_nm_create(uint32_t flags)
                 return NULL;
         }
 
+        // Listen for IPv4 route changes.
+        nm->route_id = l_netlink_register(nm->rtnl,
+                                         RTNLGRP_IPV4_ROUTE,
+                                         handle_route,
+                                         nm,    // user_data
+                                         NULL); // destroy
+
+        if (nm->route_id == 0) {
+                l_error("Unable to monitor IPv4 route changes.");
+                mptcpd_nm_destroy(nm);
+                return NULL;
+        }
+
+ 
         // Listen for IPv6 address changes.
         nm->ipv6_id = l_netlink_register(nm->rtnl,
                                          RTNLGRP_IPV6_IFADDR,
