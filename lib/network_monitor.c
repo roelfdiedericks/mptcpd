@@ -1312,12 +1312,24 @@ static void handle_ifaddr(uint16_t type,
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface(ifa, nm);
 
+
+		l_info("handle_ifaddr:%s: family:(%s) message:%d, len:%d, nmiface:%p",
+				type == RTM_NEWADDR ? "RTM_NEWADDR" : "RTM_DELADDR",
+				ifa->ifa_family == AF_INET ? "AF_INET" : "AF_INET6",
+				type,
+				len,
+				(void *) interface
+			  );
+
+
         /*
           Verify that the address belongs to a network interface being
           monitored.
          */
-        if (interface == NULL)
+        if (interface == NULL) {
+				l_error("handle_ifaddr: interface is not monitored");
                 return;
+		}
 
         handle_ifaddr_func_t handler = NULL;
 
