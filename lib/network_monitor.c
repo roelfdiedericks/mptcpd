@@ -982,10 +982,14 @@ static void handle_rtm_getroute(int error,
         l_info("found default route for address %s on interface %d",
                mptcpd_addr_to_string(ai, str, INET6_ADDRSTRLEN), ai->index);
 
-        if (ai->interface)
-                l_queue_foreach(ai->nm->ops,
-                                notify_new_address,
-                                ai);
+        if (ai->interface) {
+			//rodent: let's delete them first, then add em again
+			l_queue_foreach(ai->nm->ops, notify_delete_address, ai);
+
+			l_queue_foreach(ai->nm->ops,
+					notify_new_address,
+					ai);
+		}
 
         mptcpd_addr_put(ai);
 
