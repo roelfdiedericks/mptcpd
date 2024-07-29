@@ -1182,7 +1182,7 @@ static struct mptcpd_interface *get_mptcpd_interface(
  *                list (queue) of @c mptcpd_interface objects.
  */
 static struct mptcpd_interface *get_mptcpd_interface_from_route(
-        struct ifaddrmsg const * ifa,
+        struct rtmsg const * rtm,
         struct mptcpd_nm *       nm)
 {
         /* See rtnetlink(7) man page for struct ifaddrmsg details. */
@@ -1193,6 +1193,11 @@ static struct mptcpd_interface *get_mptcpd_interface_from_route(
          *       RTM_GETADDR.  While that is true at the moment, it
          *       may change in the future.
          */
+
+		bool const is_ipv4 = rtm->rtm_family == AF_INET;
+		l_debug("TODO:get_mptcpd_interface_from_route, is_ipv4:%d",is_ipv4);
+		return NULL;
+		/*
         l_debug("\n"
                 "ifa_family:    %s\n"
                 "ifa_prefixlen: %u\n"
@@ -1216,6 +1221,7 @@ static struct mptcpd_interface *get_mptcpd_interface_from_route(
                         ifa->ifa_index);
 
         return interface;
+		*/
 }
 
 
@@ -1340,10 +1346,10 @@ static void handle_route(uint16_t type,
         struct rtmsg const *const rtm = data;
         struct mptcpd_nm *const       nm  = user_data;
 
-        //struct mptcpd_interface *const interface =
-        //        get_mptcpd_interface(ifa, nm);
+        struct mptcpd_interface *const interface =
+                get_mptcpd_interface_from_route(rtm, nm);
 
-		l_info("received a netlink ROUTE message:%d rtm_type:%d",type,rtm->rtm_type);
+		l_info("received a netlink ROUTE message:%d rtm_type:%d, len:%d",type,rtm->rtm_type,len);
 
         /*
           Verify that the address belongs to a network interface being
