@@ -77,7 +77,7 @@ static void addr_adv_new_local_address(struct mptcpd_interface const *i,
         struct mptcpd_idm *const idm = mptcpd_pm_get_idm(pm);
         mptcpd_aid_t const id = mptcpd_idm_get_id(idm, sa);
 
-		l_info("addr_adv_new_local_address: ifindex:%d ifname:%s",i->ifindex,i->name);
+		l_info("addr_adv_new_local_address: ifindex:%d ifname:%s",i->index,i->name);
 
         if (id == 0) {
                 l_error("Unable to map addr to ID.");
@@ -101,7 +101,7 @@ static void addr_adv_delete_local_address(
 
         struct mptcpd_idm *const idm = mptcpd_pm_get_idm(pm);
         mptcpd_aid_t const id = mptcpd_idm_remove_id(idm, sa);
-		l_info("addr_adv_delete_local_address: ifindex:%d ifname:%s",i->ifindex,i->name);
+		l_info("addr_adv_delete_local_address: ifindex:%d ifname:%s",i->index,i->name);
 
         if (id == 0) {
                 // Not necessarily an error.

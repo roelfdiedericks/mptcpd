@@ -986,7 +986,7 @@ static void handle_rtm_getroute(int error,
 
         if (ai->interface) {
 			//rodent: let's delete them first, then add em again
-			l_queue_foreach(ai->nm->ops, notify_delete_address, ai);
+			//l_queue_foreach(ai->nm->ops, notify_delete_address, ai);
 
 			l_queue_foreach(ai->nm->ops,
 					notify_new_address,
