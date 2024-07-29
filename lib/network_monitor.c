@@ -1072,6 +1072,9 @@ static void update_addr(struct mptcpd_nm *nm,
                         struct mptcpd_interface *interface,
                         struct mptcpd_rtm_addr const *rtm_addr)
 {
+
+		l_info("update_addr: ifindex:%d",interface->index);
+
         if ((nm->notify_flags & MPTCPD_NOTIFY_FLAG_SKIP_LL)
             && (rtm_addr->ifa->ifa_scope == RT_SCOPE_LINK))
                 return;
@@ -1080,6 +1083,7 @@ static void update_addr(struct mptcpd_nm *nm,
             && (rtm_addr->ifa->ifa_scope == RT_SCOPE_HOST))
                 return;
 
+		l_info("update_addr2: ifindex:%d",interface->index);
         struct nm_addr_info *addr =
                 l_queue_find(interface->addrs,
                              mptcpd_addr_match,
@@ -1124,19 +1128,21 @@ static void remove_addr(struct mptcpd_nm *nm,
                         struct mptcpd_interface *interface,
                         struct mptcpd_rtm_addr const *rtm_addr)
 {
+		l_info("remove_addr: ifindex:%d",interface->index);
         struct sockaddr *const addr =
                 l_queue_remove_if(interface->addrs,
                                   mptcpd_addr_match,
                                   rtm_addr);
 
         if (addr == NULL) {
-                l_debug("Network address not monitored. "
+                l_info("Network address not monitored. "
                         "Ignoring monitoring removal "
                         "failure.");
 
                 return;
         }
 
+		l_info("remove_addr: ifindex:%d",interface->index);
         l_queue_foreach(nm->ops, notify_delete_address, addr);
 
         mptcpd_addr_put(addr);
