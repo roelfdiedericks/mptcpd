@@ -1325,7 +1325,7 @@ static void handle_ifaddr(uint16_t type,
 				ifa->ifa_family == AF_INET ? "AF_INET" : "AF_INET6",
 				type,
 				len,
-				ifa->ifindex
+				ifa->index,
 				(void *) interface
 			  );
 
