@@ -658,7 +658,7 @@ static void update_link(struct ifinfomsg const *ifi,
                 l_queue_find(nm->interfaces,
                              mptcpd_interface_match,
                              &ifi->ifi_index);
-		l_debug("Network interface %d went updated/up. ",
+		l_info("Network interface %d went updated/up. ",
 				ifi->ifi_index);
 
 
@@ -733,6 +733,8 @@ static void handle_link(uint16_t type,
 {
         struct ifinfomsg const *const ifi = data;
         struct mptcpd_nm *const       nm  = user_data;
+
+		l_info("handle_link: message:%d",type);
 
         switch (type) {
         case RTM_NEWLINK:
@@ -1626,7 +1628,7 @@ struct mptcpd_nm *mptcpd_nm_create(uint32_t flags)
 
         // Listen for route changes.
         nm->route_id = l_netlink_register(nm->rtnl,
-                                         RTNLGRP_IPV4_ROUTE & RTNLGRP_IPV6_ROUTE,
+                                         RTNLGRP_IPV4_ROUTE,
                                          handle_route,
                                          nm,    // user_data
                                          NULL); // destroy
