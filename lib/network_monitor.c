@@ -1346,10 +1346,42 @@ static void handle_route(uint16_t type,
         struct rtmsg const *const rtm = data;
         struct mptcpd_nm *const       nm  = user_data;
 
+		char str[INET6_ADDRSTRLEN];
+        uint32_t ifindex = 0;
+        char *dst = NULL;
+
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface_from_route(rtm, nm);
 
-		l_info("received a netlink ROUTE message:%d rtm_type:%d, len:%d, interface:%p",type,rtm->rtm_type,len,(void *)interface);
+		l_info("received a netlink ROUTE: family:(%s) message:%d rtm_type:%d, len:%d, interface:%p",
+				rtm->rtm_family == AF_INET ? "AF_INET" : "AF_INET6",
+				type,
+				rtm->rtm_type,i
+				len,
+				(void *)interface
+				);
+
+
+		if (rtm->rtm_family == AF_INET) {
+			l_rtnl_route4_extract(data,
+					len,
+					NULL,
+					&ifindex,
+					&dst,
+					NULL,
+					NULL);
+		} else {
+			l_rtnl_route6_extract(data,
+					len,
+					NULL,
+					&ifindex,
+					&dst,
+					NULL,
+					NULL);
+		}
+
+		l_info("extracted dest:%s ifindex:%d",dst,ifindex);
+
 
         /*
           Verify that the address belongs to a network interface being
