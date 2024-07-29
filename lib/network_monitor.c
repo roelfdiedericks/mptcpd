@@ -1316,8 +1316,16 @@ static void handle_ifaddr(uint16_t type,
         struct ifaddrmsg const *const ifa = data;
         struct mptcpd_nm *const       nm  = user_data;
 
+		l_info("handle_ifaddr");
+
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface(ifa, nm);
+
+        if (interface == NULL) {
+			l_info("handle_ifaddr: interface was null");
+			return;
+		}
+
 
 
 		l_info("handle_ifaddr:%s: family:(%s) message:%d, len:%d, nmiface:%p ifa->ifindex:%d",
@@ -1385,8 +1393,15 @@ static void handle_route(uint16_t type,
         char *gateway = NULL;
         char *src = NULL;
 
+		l_info("handle_route");
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface_from_route(rtm, nm);
+
+        if (interface == NULL) {
+			l_info("handle_route: interface was null");
+			return;
+		}
+
 
 		l_info("handle_route:%s: family:(%s) message:%d rtm_type:%d, len:%d, nmiface:%p",
 				type == RTM_NEWROUTE ? "RTM_NEWROUTE" : "RTM_DELROUTE",
@@ -1553,13 +1568,14 @@ static void handle_rtm_getaddr(int error,
         struct ifaddrmsg     const *const ifa    = data;
         struct mptcpd_nm           *const nm     = user_data;
 
+		l_info("handle_rtm_getaddr");
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface(ifa, nm);
+        if (interface == NULL) {
+			l_info("handle_rtm_getaddr: interface was null");
+			return;
+		}
 
-        if (interface == NULL)
-                return;
-
-        handle_ifaddr_func_t handler = insert_addr;
         if (nm->notify_flags & MPTCPD_NOTIFY_FLAG_EXISTING)
                 handler = update_addr;
 
