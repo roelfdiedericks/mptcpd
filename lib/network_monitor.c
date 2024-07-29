@@ -936,7 +936,7 @@ static void handle_rtm_getroute(int error,
         }
 
 		l_debug("handle_rtm_getroute: from %s ifindex:%d",
-				mptcpd_addr_to_string(ai, str, INET6_ADDRSTRLEN)
+				mptcpd_addr_to_string(ai, str, INET6_ADDRSTRLEN),
 				ai->index
 			   );
 
