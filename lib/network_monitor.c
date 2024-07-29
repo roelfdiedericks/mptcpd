@@ -1363,7 +1363,7 @@ static void handle_route(uint16_t type,
                 get_mptcpd_interface_from_route(rtm, nm);
 
 		l_info("handle_route:%s: family:(%s) message:%d rtm_type:%d, len:%d, nmiface:%p",
-				msgtype == RTM_NEWROUTE ? "RTM_NEWROUTE" : "RTM_DELROUTE",
+				type == RTM_NEWROUTE ? "RTM_NEWROUTE" : "RTM_DELROUTE",
 				rtm->rtm_family == AF_INET ? "AF_INET" : "AF_INET6",
 				type,
 				rtm->rtm_type,
