@@ -697,7 +697,7 @@ static void remove_link(struct ifinfomsg const *ifi,
                                   mptcpd_interface_match,
                                   &ifi->ifi_index);
 								  */
-        struct mptcpd_interface *i =
+        struct mptcpd_interface *interface =
                 l_queue_find(nm->interfaces,
                              mptcpd_interface_match,
                              &ifi->ifi_index);
