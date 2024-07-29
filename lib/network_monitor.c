@@ -1382,12 +1382,16 @@ static void handle_route(uint16_t type,
 					&src);
 		}
 
+
 		struct mptcpd_interface *i =
                 l_queue_find(nm->interfaces,
                              mptcpd_interface_match,
                              &ifindex);
-
-		l_info("extracted dest:%s via %s src:%s ifindex:%d ifname:%s",dst,gateway,src,ifindex,i->name);
+		if (!i) {
+			l_error("couldn't extract an nm->interface dst:%s ifindex:%d ", dst,ifindex);
+		} else {
+			l_info("extracted dest:%s via %s src:%s ifindex:%d ifname:%s",dst,gateway,src,ifindex,i->name);
+		}
 
 
         /*
