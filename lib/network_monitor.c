@@ -1620,9 +1620,9 @@ struct mptcpd_nm *mptcpd_nm_create(uint32_t flags)
                 return NULL;
         }
 
-        // Listen for IPv4 route changes.
+        // Listen for route changes.
         nm->route_id = l_netlink_register(nm->rtnl,
-                                         RTNLGRP_IPV4_ROUTE,
+                                         RTNLGRP_IPV4_ROUTE & RTNLGRP_IPV6_ROUTE,
                                          handle_route,
                                          nm,    // user_data
                                          NULL); // destroy
