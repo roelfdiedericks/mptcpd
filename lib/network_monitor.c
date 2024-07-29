@@ -1195,7 +1195,7 @@ static struct mptcpd_interface *get_mptcpd_interface_from_route(
          */
 
 		bool const is_ipv4 = rtm->rtm_family == AF_INET;
-		l_debug("TODO   :get_mptcpd_interface_from_route, is_ipv4:%d, nm->route_id:%d",is_ipv4,(void *)nm->route_id);
+		l_debug("TODO   :get_mptcpd_interface_from_route, is_ipv4:%d, nm->route_id:%d",is_ipv4,nm->route_id);
 		return NULL;
 		/*
         l_debug("\n"
@@ -1349,7 +1349,7 @@ static void handle_route(uint16_t type,
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface_from_route(rtm, nm);
 
-		l_info("received a netlink ROUTE message:%d rtm_type:%d, len:%d, interface:%p",type,rtm->rtm_type,len,interface);
+		l_info("received a netlink ROUTE message:%d rtm_type:%d, len:%d, interface:%p",type,rtm->rtm_type,len,(void *)interface);
 
         /*
           Verify that the address belongs to a network interface being
