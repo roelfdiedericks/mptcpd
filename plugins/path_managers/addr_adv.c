@@ -105,7 +105,7 @@ static void addr_adv_delete_local_address(
 
         if (id == 0) {
                 // Not necessarily an error.
-                l_info("No address ID associated with addr. ifindex:%d ifname:%s",i->ifindex,i->name);
+                l_info("No address ID associated with addr. ifindex:%d ifname:%s",i->index,i->name);
                 return;
         }
 
