@@ -1349,16 +1349,17 @@ static void handle_route(uint16_t type,
 		//char str[INET6_ADDRSTRLEN];
         uint32_t ifindex = 0;
         char *dst = NULL;
+        char *gateway = NULL;
+        char *src = NULL;
 
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface_from_route(rtm, nm);
 
-		l_info("received a netlink ROUTE: family:(%s) message:%d rtm_type:%d, len:%d, interface:%p",
+		l_info("received a netlink ROUTE: family:(%s) message:%d rtm_type:%d, len:%d",
 				rtm->rtm_family == AF_INET ? "AF_INET" : "AF_INET6",
 				type,
 				rtm->rtm_type,
 				len,
-				(void *)interface
 				);
 
 
@@ -1368,19 +1369,24 @@ static void handle_route(uint16_t type,
 					NULL,
 					&ifindex,
 					&dst,
-					NULL,
-					NULL);
+					&gateway,
+					&src);
 		} else {
 			l_rtnl_route6_extract(data,
 					len,
 					NULL,
 					&ifindex,
 					&dst,
-					NULL,
-					NULL);
+					&gateway,
+					&src);
 		}
 
-		l_info("extracted dest:%s ifindex:%d",dst,ifindex);
+		struct mptcpd_interface *i =
+                l_queue_find(nm->interfaces,
+                             mptcpd_interface_match,
+                             &ifindex);
+
+		l_info("extracted dest:%s via %s src:%s ifindex:%d ifname:%s",dst,gateway,src,ifindex,i->name);
 
 
         /*
