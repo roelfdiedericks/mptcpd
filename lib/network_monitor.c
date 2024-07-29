@@ -691,10 +691,16 @@ static void update_link(struct ifinfomsg const *ifi,
 static void remove_link(struct ifinfomsg const *ifi,
                         struct mptcpd_nm *nm)
 {
+	/*
         struct mptcpd_interface *const interface =
                 l_queue_remove_if(nm->interfaces,
                                   mptcpd_interface_match,
                                   &ifi->ifi_index);
+								  */
+        struct mptcpd_interface *i =
+                l_queue_find(nm->interfaces,
+                             mptcpd_interface_match,
+                             &ifi->ifi_index);
 
 		l_info("Network interface %d went down. ",
 				ifi->ifi_index);
@@ -1314,11 +1320,12 @@ static void handle_ifaddr(uint16_t type,
                 get_mptcpd_interface(ifa, nm);
 
 
-		l_info("handle_ifaddr:%s: family:(%s) message:%d, len:%d, nmiface:%p",
+		l_info("handle_ifaddr:%s: family:(%s) message:%d, len:%d, nmiface:%p ifa->ifindex:%d",
 				type == RTM_NEWADDR ? "RTM_NEWADDR" : "RTM_DELADDR",
 				ifa->ifa_family == AF_INET ? "AF_INET" : "AF_INET6",
 				type,
 				len,
+				ifa->ifindex
 				(void *) interface
 			  );
 
