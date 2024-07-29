@@ -1571,10 +1571,13 @@ static void handle_rtm_getaddr(int error,
 		l_info("handle_rtm_getaddr");
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface(ifa, nm);
+
         if (interface == NULL) {
 			l_info("handle_rtm_getaddr: interface was null");
 			return;
 		}
+
+		handle_ifaddr_func_t handler = insert_addr;
 
         if (nm->notify_flags & MPTCPD_NOTIFY_FLAG_EXISTING)
                 handler = update_addr;
