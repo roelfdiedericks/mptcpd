@@ -1355,7 +1355,7 @@ static void handle_route(uint16_t type,
         struct mptcpd_interface *const interface =
                 get_mptcpd_interface_from_route(rtm, nm);
 
-		l_info("received a netlink ROUTE: family:(%s) message:%d rtm_type:%d, len:%d, nmiface:%d",
+		l_info("received a netlink ROUTE: family:(%s) message:%d rtm_type:%d, len:%d, nmiface:%p",
 				rtm->rtm_family == AF_INET ? "AF_INET" : "AF_INET6",
 				type,
 				rtm->rtm_type,
