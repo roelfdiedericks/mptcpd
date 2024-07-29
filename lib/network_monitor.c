@@ -1346,7 +1346,7 @@ static void handle_route(uint16_t type,
         struct rtmsg const *const rtm = data;
         struct mptcpd_nm *const       nm  = user_data;
 
-		char str[INET6_ADDRSTRLEN];
+		//char str[INET6_ADDRSTRLEN];
         uint32_t ifindex = 0;
         char *dst = NULL;
 
@@ -1356,7 +1356,7 @@ static void handle_route(uint16_t type,
 		l_info("received a netlink ROUTE: family:(%s) message:%d rtm_type:%d, len:%d, interface:%p",
 				rtm->rtm_family == AF_INET ? "AF_INET" : "AF_INET6",
 				type,
-				rtm->rtm_type,i
+				rtm->rtm_type,
 				len,
 				(void *)interface
 				);
