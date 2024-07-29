@@ -462,6 +462,7 @@ mptcpd_interface_create(struct ifinfomsg const *ifi, uint32_t len)
 static void mptcpd_interface_destroy(void *data)
 {
         struct mptcpd_interface *const i = data;
+		l_info("mptcpd_interface_destroy: ifindex:%d",i->index);
 
         l_queue_destroy(i->addrs, mptcpd_addr_put);
         l_free(i);
@@ -1158,7 +1159,7 @@ static struct mptcpd_interface *get_mptcpd_interface(
          *       RTM_GETADDR.  While that is true at the moment, it
          *       may change in the future.
          */
-        l_debug("\n"
+        l_info("\nget_mptcpd_interface:\n"
                 "ifa_family:    %s\n"
                 "ifa_prefixlen: %u\n"
                 "ifa_flags:     0x%02x\n"
