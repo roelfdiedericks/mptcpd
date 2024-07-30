@@ -1074,16 +1074,19 @@ static void update_addr(struct mptcpd_nm *nm,
 {
 
 		l_info("update_addr: ifindex:%d",interface->index);
-
+ 
         if ((nm->notify_flags & MPTCPD_NOTIFY_FLAG_SKIP_LL)
-            && (rtm_addr->ifa->ifa_scope == RT_SCOPE_LINK))
+            && (rtm_addr->ifa->ifa_scope == RT_SCOPE_LINK)) {
                 return;
+		}
 
         if ((nm->notify_flags & MPTCPD_NOTIFY_FLAG_SKIP_HOST)
-            && (rtm_addr->ifa->ifa_scope == RT_SCOPE_HOST))
+            && (rtm_addr->ifa->ifa_scope == RT_SCOPE_HOST)) {
                 return;
+		}
 
 		l_info("update_addr2: ifindex:%d",interface->index);
+
         struct nm_addr_info *addr =
                 l_queue_find(interface->addrs,
                              mptcpd_addr_match,
